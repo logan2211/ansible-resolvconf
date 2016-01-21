@@ -10,4 +10,6 @@ nameserver {{ hostvars[item]['ansible_ssh_host'] }}
 nameserver {{ item }}
 {% endfor %}
 
+{% if resolvconf_search_domains | length > 0 %}
 search{% for item in resolvconf_search_domains %} {{ item }}{% endfor %}
+{% endif %}
