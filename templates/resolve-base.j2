@@ -1,0 +1,13 @@
+# {{ ansible_managed }}
+
+{% if groups[resolvconf_resolver_group] is defined %}
+{% for item in groups[resolvconf_resolver_group] %}
+# {{ item }}
+nameserver {{ hostvars[item]['ansible_ssh_host'] }}
+{% endfor %}
+{% endif %}
+{% for item in resolvconf_resolver_ips %}
+nameserver {{ item }}
+{% endfor %}
+
+search{% for item in resolvconf_search_domains %} {{ item }}{% endfor %}
