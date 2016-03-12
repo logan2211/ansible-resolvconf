@@ -1,5 +1,9 @@
 # {{ ansible_managed }}
 
+{% if resolvconf_options | length > 0 %}
+options {{ resolvconf_options | join(' ') }}
+{% endif %}
+
 {% if groups[resolvconf_resolver_group] is defined %}
 {% for item in groups[resolvconf_resolver_group] %}
 # {{ item }}
@@ -11,5 +15,5 @@ nameserver {{ item }}
 {% endfor %}
 
 {% if resolvconf_search_domains | length > 0 %}
-search{% for item in resolvconf_search_domains %} {{ item }}{% endfor %}
+search {{ resolvconf_search_domains | join(' ') }}
 {% endif %}
