@@ -4,15 +4,16 @@
 options {{ resolvconf_options | join(' ') }}
 {% endif %}
 
-{% if groups[resolvconf_resolver_group] is defined %}
+{% if resolvconf_resolver_ips | length > 0 %}
+{% for item in resolvconf_resolver_ips %}
+nameserver {{ item }}
+{% endfor %}
+{% else %}
 {% for item in groups[resolvconf_resolver_group] %}
 # {{ item }}
 nameserver {{ hostvars[item]['ansible_ssh_host'] }}
 {% endfor %}
 {% endif %}
-{% for item in resolvconf_resolver_ips %}
-nameserver {{ item }}
-{% endfor %}
 
 {% if resolvconf_search_domains | length > 0 %}
 search {{ resolvconf_search_domains | join(' ') }}
