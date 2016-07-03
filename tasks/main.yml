@@ -3,7 +3,7 @@
 - name: Update resolvers
   template:
     src: resolvconf-base.j2
-    dest: "/run/resolvconf/resolv.conf"
+    dest: "/etc/resolv.conf"
   tags: resolvconf-config
 
 - name: Update resolvconf base
