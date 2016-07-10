@@ -6,14 +6,22 @@
     dest: "/etc/resolv.conf"
   tags: resolvconf-config
 
+- name: Check if resolvconf directory exists
+  stat:
+    path: "/etc/resolvconf/resolv.conf.d"
+  register: resolvconf_dir
+  tags: resolvconf-config
+
 - name: Update resolvconf base
   template:
     src: resolvconf-base.j2
     dest: "/etc/resolvconf/resolv.conf.d/base"
+  when: resolvconf_dir.exists
   tags: resolvconf-config
 
 - name: Update resolvconf tail
   copy:
     content: "# Null tail\n"
     dest: "/etc/resolvconf/resolv.conf.d/tail"
+  when: resolvconf_dir.exists
   tags: resolvconf-config
