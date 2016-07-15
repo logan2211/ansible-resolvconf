@@ -13,7 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-resolvconf_resolver_group: dns-servers
-resolvconf_resolver_ips: []
-resolvconf_search_domains: []
-resolvconf_options: []
+## APT Cache Options
+cache_timeout: 600
+
+resolvconf_packages:
+  - resolvconf
