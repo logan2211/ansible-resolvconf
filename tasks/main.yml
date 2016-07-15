@@ -13,28 +13,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: Gather variables for each operating system
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "{{ ansible_distribution | lower }}.yml"
+    - "{{ ansible_os_family | lower }}.yml"
+  tags:
+    - always
+
+- include: resolvconf-apt.yml
+  when:
+    - ansible_pkg_mgr == 'apt'
+
+
 - name: Update resolvers
   template:
     src: resolvconf-base.j2
     dest: "/etc/resolv.conf"
-  tags: resolvconf-config
-
-- name: Check if resolvconf directory exists
-  stat:
-    path: "/etc/resolvconf/resolv.conf.d"
-  register: resolvconf_dir
-  tags: resolvconf-config
-
-- name: Update resolvconf base
-  template:
-    src: resolvconf-base.j2
-    dest: "/etc/resolvconf/resolv.conf.d/base"
-  when: resolvconf_dir.exists
-  tags: resolvconf-config
-
-- name: Update resolvconf tail
-  copy:
-    content: "# Null tail\n"
-    dest: "/etc/resolvconf/resolv.conf.d/tail"
-  when: resolvconf_dir.exists
   tags: resolvconf-config
