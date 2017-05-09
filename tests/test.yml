@@ -13,9 +13,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- include: test-create-containers.yml
+
 - name: Playbook for role testing
-  hosts: localhost
-  connection: local
+  hosts: test_containers
+  pre_tasks:
+    - block:
+        - name: Unmount the /etc/resolv.conf when running in a docker container
+          command: umount /etc/resolv.conf
+        - name: Set the base nameservers
+          copy:
+            dest: /etc/resolv.conf
+            content: |
+              nameserver 8.8.8.8
+              nameserver 8.8.4.4
+            owner: root
+            group: root
+            mode: '0644'
+      when: ansible_virtualization_type == 'docker'
   roles:
     - role: "{{ rolename | basename }}"
   vars:
@@ -24,9 +39,10 @@
       - 64.31.5.2
   post_tasks:
     - name: Check resolv.conf contents
-      set_fact:
-        resolvconf_file: "{{ lookup('file', '/etc/resolv.conf') }}"
+      slurp:
+        src: /etc/resolv.conf
+      register: resolv_conf_file
     - name: Check role functions
       assert:
         that:
-          - "'64.31.5.1' in resolvconf_file"
+          - "'64.31.5.1' in (resolv_conf_file.content | b64decode)"
