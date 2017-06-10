@@ -11,7 +11,7 @@ nameserver {{ item }}
 {% else %}
 {% for item in groups[resolvconf_resolver_group] %}
 # {{ item }}
-nameserver {{ hostvars[item]['ansible_ssh_host'] }}
+nameserver {{ hostvars[item]['ansible_host'] }}
 {% endfor %}
 {% endif %}
 
