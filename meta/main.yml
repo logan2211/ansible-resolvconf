@@ -29,7 +29,7 @@ galaxy_info:
     - name: opensuse
       versions:
         - all
-  categories:
+  galaxy_tags:
     - dns
     - resolution
 dependencies: []
